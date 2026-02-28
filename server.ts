@@ -79,21 +79,17 @@ async function sendToWeChat(quote: any) {
 }
 
 // Schedule task at 6:10 PM every day
-cron.schedule("* * * * *", async () => {
+cron.schedule("1 * * * *", async () => {
   const today = format(new Date(), "yyyy-MM-dd");
   console.log(`Running scheduled task for ${today}`);
   
   let quote = db.prepare("SELECT * FROM quotes WHERE date = ?").get(today);
-
-  console.log('quote ====>', quote);
-
   if (!quote) {
-    console.log('fetch daily quote....')
-    // quote = await fetchDailyQuote(today);
+    quote = await fetchDailyQuote(today);
   }
   
   if (quote) {
-    console.log('send to wechat...')
+    console.log(quote);
     // await sendToWeChat(quote);
   }
 }, {
@@ -138,9 +134,10 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.join(__dirname, "dist")));
+    const distPath = path.join(process.cwd(), "dist");
+    app.use(express.static(distPath));
     app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
+      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
