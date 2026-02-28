@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sun, Calendar, Send, History, CheckCircle2, Loader2, ArrowRight, Zap, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { format } from 'date-fns';
+import { Message } from './components/Message';
 
 interface Quote {
   id: number;
@@ -17,6 +18,17 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'history'>('today');
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => setMessage(null), 4000);
+    return () => clearTimeout(timer);
+  }, [message]);
+
+  const showMessage = (type: 'success' | 'error', text: string) => {
+    setMessage({ type, text });
+  };
 
   const fetchTodayQuote = async () => {
     try {
@@ -52,13 +64,13 @@ export default function App() {
     try {
       const res = await fetch('/api/test-send', { method: 'POST' });
       if (res.ok) {
-        alert('Test notification sent! Please check your WeChat.');
+        showMessage('success', 'Test notification sent! Please check your WeChat.');
         fetchTodayQuote();
       } else {
-        alert('Failed to send. Please check your SERVERCHAN_SENDKEY configuration.');
+        showMessage('error', 'Failed to send. Please check your SERVERCHAN_SENDKEY configuration.');
       }
     } catch (err) {
-      alert('An error occurred while sending.');
+      showMessage('error', 'An error occurred while sending.');
     } finally {
       setSending(false);
     }
@@ -74,6 +86,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#111827] font-sans selection:bg-indigo-100">
+      <Message
+        open={!!message}
+        type={message?.type ?? 'success'}
+        text={message?.text ?? ''}
+        onClose={() => setMessage(null)}
+      />
+
       {/* Navigation */}
       <nav className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
