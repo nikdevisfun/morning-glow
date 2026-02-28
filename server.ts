@@ -90,7 +90,7 @@ cron.schedule("0 6 * * *", async () => {
   
   if (quote) {
     console.log(quote);
-    // await sendToWeChat(quote);
+    await sendToWeChat(quote);
   }
 }, {
   timezone: "Asia/Shanghai"
