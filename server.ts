@@ -1,5 +1,5 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
+import * as viteModule from "vite";
 import cron from "node-cron";
 import Database from "better-sqlite3";
 import axios from "axios";
@@ -79,7 +79,7 @@ async function sendToWeChat(quote: any) {
 }
 
 // Schedule task at 6:10 PM every day
-cron.schedule("1 * * * *", async () => {
+cron.schedule("* * * * *", async () => {
   const today = format(new Date(), "yyyy-MM-dd");
   console.log(`Running scheduled task for ${today}`);
   
@@ -128,7 +128,7 @@ app.post("/api/test-send", async (req, res) => {
 
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
+    const vite = await viteModule.createServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
