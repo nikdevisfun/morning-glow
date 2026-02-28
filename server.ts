@@ -78,18 +78,23 @@ async function sendToWeChat(quote: any) {
   }
 }
 
-// Schedule task at 6:00 AM every day
-cron.schedule("0 6 * * *", async () => {
+// Schedule task at 6:10 PM every day
+cron.schedule("* * * * *", async () => {
   const today = format(new Date(), "yyyy-MM-dd");
   console.log(`Running scheduled task for ${today}`);
   
   let quote = db.prepare("SELECT * FROM quotes WHERE date = ?").get(today);
+
+  console.log('quote ====>', quote);
+
   if (!quote) {
-    quote = await fetchDailyQuote(today);
+    console.log('fetch daily quote....')
+    // quote = await fetchDailyQuote(today);
   }
   
   if (quote) {
-    await sendToWeChat(quote);
+    console.log('send to wechat...')
+    // await sendToWeChat(quote);
   }
 }, {
   timezone: "Asia/Shanghai"
