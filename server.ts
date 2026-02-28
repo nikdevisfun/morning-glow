@@ -79,7 +79,7 @@ async function sendToWeChat(quote: any) {
 }
 
 // Schedule task at 6:10 PM every day
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 6 * * *", async () => {
   const today = format(new Date(), "yyyy-MM-dd");
   console.log(`Running scheduled task for ${today}`);
   
